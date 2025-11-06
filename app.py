@@ -3,7 +3,7 @@ import threading
 import requests
 
 class ProxyServer:
-    def __init__(self, host='127.0.0.1', port=8080):
+    def __init__(self, host='0.0.0.0', port=8080):
         self.host = host
         self.port = port
 
