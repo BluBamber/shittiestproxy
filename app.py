@@ -11,30 +11,31 @@ class ProxyServer:
         try:
             request = client_socket.recv(1024)
             if not request:
-                return
-            
+                return  # No request received, so return early
+
             request_str = request.decode()
             parts = request_str.split()
-            
+
             if len(parts) < 2:
                 print("Invalid request: No URL found.")
                 client_socket.close()
                 return
-            
+
             url = parts[1]
-            
+
             if "://" in url:
                 url = url.split("://")[1]
             else:
                 print("Invalid request: No protocol found in URL.")
                 client_socket.close()
                 return
-            
+
             domain = url.split("/")[0]
             print(f"Proxying request to: {domain}")
-            
+
             response = requests.get(f'http://{domain}')
             client_socket.send(response.content)
+
         except Exception as e:
             print(f"Error handling request: {e}")
         finally:
@@ -44,6 +45,8 @@ class ProxyServer:
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_socket.bind((self.host, self.port))
         server_socket.listen(5)
+        print(f"Proxy server started on {self.host}:{self.port}")
+        
         while True:
             client_socket, _ = server_socket.accept()
             threading.Thread(target=self.handle_request, args=(client_socket,)).start()
